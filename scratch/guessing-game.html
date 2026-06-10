@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!--
+    guessing-game.html  -  Small web app built in collaboration with AI.
+    Everything (HTML, CSS, and JavaScript) lives on this single page.
+    Linked from the "Traveling the World" scratch page.
+
+    Creative additions beyond a basic guessing game:
+      - Three difficulty levels with different ranges
+      - "Warmer / Colder" proximity hints (not just high/low)
+      - Live attempt counter and a history of past guesses
+      - Best-score tracking saved in the browser (localStorage)
+      - A travel theme to tie it back to the rest of the site
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #143c50 0%, #1f5b73 100%);
+            color: #fdf6ec;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .game {
+            background-color: #ffffff;
+            color: #3a3a3a;
+            width: 100%;
+            max-width: 460px;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            padding: 34px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: "Georgia", serif;
+            color: #1f5b73;
+            font-size: 1.9rem;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #8a6f4a;
+            margin-bottom: 22px;
+            font-size: 0.98rem;
+        }
+
+        .difficulty {
+            margin-bottom: 20px;
+        }
+
+        .difficulty button {
+            background-color: #f1e6d4;
+            color: #b85c1a;
+            border: 2px solid transparent;
+            padding: 8px 14px;
+            margin: 3px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.15s ease;
+        }
+
+        .difficulty button:hover { background-color: #e8d6bb; }
+
+        .difficulty button.selected {
+            background-color: #e08a3c;
+            color: #ffffff;
+            border-color: #b85c1a;
+        }
+
+        .range-note {
+            font-size: 0.95rem;
+            color: #1f5b73;
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        #guessInput {
+            flex: 1;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #cbd5db;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #guessInput:focus {
+            outline: none;
+            border-color: #1f5b73;
+        }
+
+        .btn {
+            background-color: #1f5b73;
+            color: #ffffff;
+            border: none;
+            padding: 12px 18px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn:hover { background-color: #143c50; }
+
+        .btn.reset {
+            background-color: #e08a3c;
+            margin-top: 8px;
+        }
+
+        .btn.reset:hover { background-color: #b85c1a; }
+
+        #message {
+            min-height: 28px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .hot   { color: #d63b2f; }
+        .warm  { color: #e08a3c; }
+        .cool  { color: #2e7d9c; }
+        .cold  { color: #1f5b73; }
+        .win   { color: #2e8b57; }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background-color: #fdf6ec;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stats .label {
+            font-size: 0.78rem;
+            color: #8a6f4a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f5b73;
+        }
+
+        .history {
+            font-size: 0.9rem;
+            color: #6b6b6b;
+            min-height: 22px;
+        }
+
+        .history span {
+            display: inline-block;
+            background-color: #f1e6d4;
+            border-radius: 12px;
+            padding: 2px 9px;
+            margin: 2px;
+        }
+
+        @keyframes pop {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+
+        .celebrate { animation: pop 0.4s ease; }
+
+        .back-link {
+            display: block;
+            margin-top: 22px;
+            color: #1f5b73;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="game" id="gameCard">
+        <h1>Guess My Number</h1>
+        <p class="subtitle">I'm thinking of a number. Can you find it?</p>
+
+        <!-- Difficulty selection -->
+        <div class="difficulty">
+            <button data-max="10"  onclick="setDifficulty(10, this)">Easy (1–10)</button>
+            <button data-max="100" class="selected" onclick="setDifficulty(100, this)">Medium (1–100)</button>
+            <button data-max="500" onclick="setDifficulty(500, this)">Hard (1–500)</button>
+        </div>
+
+        <p class="range-note" id="rangeNote">Guess a number between 1 and 100</p>
+
+        <!-- Guess input -->
+        <div class="input-row">
+            <input type="number" id="guessInput" placeholder="?" min="1"
+                   onkeydown="if(event.key==='Enter') makeGuess()">
+            <button class="btn" onclick="makeGuess()">Guess</button>
+        </div>
+
+        <p id="message">&nbsp;</p>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div>
+                <div class="label">Attempts</div>
+                <div class="value" id="attempts">0</div>
+            </div>
+            <div>
+                <div class="label">Best Score</div>
+                <div class="value" id="best">-</div>
+            </div>
+        </div>
+
+        <!-- Guess history -->
+        <div class="history" id="history"></div>
+
+        <button class="btn reset" onclick="newGame()">New Game</button>
+
+        <a class="back-link" href="travel.html">&#8592; Back to Traveling the World</a>
+    </div>
+
+    <script>
+        // ----- Game state -----
+        var maxNumber = 100;
+        var secret = 0;
+        var attempts = 0;
+        var guesses = [];
+        var gameOver = false;
+
+        // ----- Start a fresh round -----
+        function newGame() {
+            // Pick a random secret number from 1..maxNumber
+            secret = Math.floor(Math.random() * maxNumber) + 1;
+            attempts = 0;
+            guesses = [];
+            gameOver = false;
+
+            document.getElementById("attempts").textContent = "0";
+            document.getElementById("history").textContent = "";
+            document.getElementById("guessInput").value = "";
+            document.getElementById("guessInput").disabled = false;
+            document.getElementById("rangeNote").textContent =
+                "Guess a number between 1 and " + maxNumber;
+
+            setMessage("Make your first guess!", "");
+            showBest();
+            document.getElementById("guessInput").focus();
+        }
+
+        // ----- Change difficulty -----
+        function setDifficulty(newMax, btn) {
+            maxNumber = newMax;
+            // Update the selected button styling
+            var buttons = document.querySelectorAll(".difficulty button");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("selected");
+            }
+            btn.classList.add("selected");
+            newGame();
+        }
+
+        // ----- Handle a guess -----
+        function makeGuess() {
+            if (gameOver) return;
+
+            var input = document.getElementById("guessInput");
+            var guess = parseInt(input.value, 10);
+
+            // Validation
+            if (isNaN(guess) || guess < 1 || guess > maxNumber) {
+                setMessage("Please enter a number from 1 to " + maxNumber + ".", "cold");
+                return;
+            }
+
+            attempts++;
+            guesses.push(guess);
+            document.getElementById("attempts").textContent = attempts;
+            updateHistory();
+
+            if (guess === secret) {
+                win();
+                return;
+            }
+
+            // Direction hint
+            var direction = (guess < secret) ? "too low" : "too high";
+
+            // Proximity (warmer/colder) hint based on distance
+            var distance = Math.abs(guess - secret);
+            var ratio = distance / maxNumber;
+            var temp, tempClass;
+            if (ratio <= 0.03)      { temp = "You're on fire!"; tempClass = "hot"; }
+            else if (ratio <= 0.08) { temp = "Very warm";       tempClass = "warm"; }
+            else if (ratio <= 0.18) { temp = "Getting warmer";  tempClass = "cool"; }
+            else                    { temp = "Cold";            tempClass = "cold"; }
+
+            setMessage(guess + " is " + direction + ". " + temp, tempClass);
+            input.value = "";
+            input.focus();
+        }
+
+        // ----- Win handling -----
+        function win() {
+            gameOver = true;
+            document.getElementById("guessInput").disabled = true;
+            setMessage("🎉 Correct! You got it in " + attempts +
+                       (attempts === 1 ? " guess!" : " guesses!"), "win");
+
+            // Celebrate animation
+            var card = document.getElementById("gameCard");
+            card.classList.remove("celebrate");
+            void card.offsetWidth; // restart the animation
+            card.classList.add("celebrate");
+
+            // Save best score (fewest attempts) per difficulty in the browser
+            var key = "bestScore_" + maxNumber;
+            var prev = localStorage.getItem(key);
+            if (prev === null || attempts < parseInt(prev, 10)) {
+                localStorage.setItem(key, attempts);
+            }
+            showBest();
+        }
+
+        // ----- Helpers -----
+        function setMessage(text, cssClass) {
+            var msg = document.getElementById("message");
+            msg.textContent = text;
+            msg.className = cssClass;
+        }
+
+        function updateHistory() {
+            var box = document.getElementById("history");
+            box.innerHTML = "Your guesses: ";
+            for (var i = 0; i < guesses.length; i++) {
+                box.innerHTML += "<span>" + guesses[i] + "</span>";
+            }
+        }
+
+        function showBest() {
+            var key = "bestScore_" + maxNumber;
+            var best = localStorage.getItem(key);
+            document.getElementById("best").textContent = (best === null) ? "-" : best;
+        }
+
+        // Start the first game when the page loads
+        newGame();
+    </script>
+
+</body>
+</html>

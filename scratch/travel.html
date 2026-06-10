@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--
+    travel.html  -  FROM-SCRATCH page (built from a blank HTML file)
+    Topic: Traveling the World
+    Uses its own hand-written stylesheet: ../css/scratch.css
+    Includes: nested lists, a non-Bootstrap image, an embedded YouTube
+    video, on-page anchors, a custom background, a live Tableau graph,
+    and navigation back to the professional pages.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traveling the World</title>
+    <link rel="stylesheet" href="../css/scratch.css">
+</head>
+<!-- "top" anchor target for the back-to-top links -->
+<body id="top">
+
+    <!-- ===== Navigation back to the professional site ===== -->
+    <div class="top-nav">
+        <a href="../index.html">&#8592; Back to My Professional Site</a>
+        <a href="../resume.html">Resume</a>
+        <a href="guessing-game.html">Play My Number Game &#9658;</a>
+    </div>
+
+    <!-- ===== Banner (DIV #1, custom background image/color) ===== -->
+    <div class="banner">
+        <h1>Traveling the World</h1>
+        <p>Collecting passport stamps, one adventure at a time</p>
+    </div>
+
+    <!-- ===== Main content wrapper (DIV #2) ===== -->
+    <div class="wrapper">
+
+        <!-- ===== On-page anchor navigation (table of contents) ===== -->
+        <div class="toc">
+            <h2>On This Page</h2>
+            <ul>
+                <li><a href="#why">Why I Love to Travel</a></li>
+                <li><a href="#bucket-list">My Travel Bucket List</a></li>
+                <li><a href="#gallery">Photo Gallery</a></li>
+                <li><a href="#video">A Video That Inspires Me</a></li>
+                <li><a href="#data">Travel Data (Live Tableau Graph)</a></li>
+            </ul>
+        </div>
+
+        <!-- ===== Section: Why ===== -->
+        <div class="travel-section" id="why">
+            <h2>Why I Love to Travel</h2>
+            <p>There is nothing quite like stepping off a plane into a place where
+               everything, from the language to the food to the streets, feels brand new.
+               Travel pushes me out of my comfort zone, teaches me about other cultures,
+               and reminds me how big and beautiful the world really is.</p>
+            <p>Every trip becomes a story I carry with me. Below are a few of the places
+               at the top of my list, some photos, a video that captures the feeling of
+               travel perfectly, and even some real data about global tourism.</p>
+        </div>
+
+        <!-- ===== Section: Bucket list (ORDERED list with nested UNORDERED lists) ===== -->
+        <div class="travel-section" id="bucket-list">
+            <h2>My Travel Bucket List</h2>
+            <p>Here are the top destinations I want to visit, ranked, along with what I most
+               want to do at each one:</p>
+
+            <ol>
+                <li>Japan
+                    <ul>
+                        <li>See the cherry blossoms in Kyoto</li>
+                        <li>Eat fresh sushi at Tokyo's Toyosu Market</li>
+                        <li>Ride the bullet train to Mount Fuji</li>
+                    </ul>
+                </li>
+                <li>Italy
+                    <ul>
+                        <li>Explore the canals of Venice</li>
+                        <li>Tour the Colosseum in Rome</li>
+                        <li>Eat real Neapolitan pizza in Naples</li>
+                    </ul>
+                </li>
+                <li>New Zealand
+                    <ul>
+                        <li>Hike the mountains of the South Island</li>
+                        <li>Visit the Hobbiton movie set</li>
+                        <li>Go stargazing in a Dark Sky Reserve</li>
+                    </ul>
+                </li>
+                <li>Iceland
+                    <ul>
+                        <li>Chase the Northern Lights</li>
+                        <li>Soak in the Blue Lagoon</li>
+                        <li>Drive the Ring Road</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- ===== Section: Photo gallery (non-Bootstrap images, DIV #3 cards) ===== -->
+        <div class="travel-section" id="gallery">
+            <h2>Photo Gallery</h2>
+            <p>A few shots from my own travels.</p>
+
+            <div class="photo-card">
+                <img src="../images/beachpicture.jpeg" alt="Elizabeth at the beach">
+                <div class="caption">Soaking up the sun on the beach.</div>
+            </div>
+
+            <div class="photo-card">
+                <img src="../images/scuba.jpeg" alt="Elizabeth scuba diving underwater">
+                <div class="caption">Scuba diving below the surface.</div>
+            </div>
+
+            <a class="back-to-top" href="#top">&#8593; Back to top</a>
+        </div>
+
+        <!-- ===== Section: YouTube video (embedded) ===== -->
+        <div class="travel-section" id="video">
+            <h2>A Video That Inspires Me</h2>
+            <p>This famous short film "MOVE" captures three friends traveling across 11
+               countries in just one minute. It's the kind of energy that makes me want
+               to book a flight right now.</p>
+
+            <div class="video-frame">
+                <iframe
+                    src="https://www.youtube.com/embed/Qz7yyfet7jQ"
+                    title="MOVE - a travel short film by Rick Mereki"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+            <p><em>(The video plays once the site is hosted online.)</em></p>
+
+            <a class="back-to-top" href="#top">&#8593; Back to top</a>
+        </div>
+
+        <!-- ===== Section: Live, interactive Tableau graph ===== -->
+        <div class="travel-section" id="data">
+            <h2>Travel Data (Live Tableau Graph)</h2>
+            <p>Travel isn't just about the experience. The data behind global tourism
+               is fascinating too, and the interactive dashboard below lets you explore travel
+               trends. Try clicking and filtering it!</p>
+
+            <iframe
+                class="tableau-frame"
+                title="Live interactive Tableau travel dashboard"
+                src="https://public.tableau.com/views/TravelSummaryDashboard/TravelSummary?:showVizHome=no&:embed=true&:toolbar=yes">
+            </iframe>
+
+            <a class="back-to-top" href="#top">&#8593; Back to top</a>
+        </div>
+
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <div class="scratch-footer">
+        <p>Thanks for visiting! <a href="../index.html">Return to my professional site</a>
+           or <a href="guessing-game.html">play my number guessing game</a>.</p>
+    </div>
+
+</body>
+</html>
